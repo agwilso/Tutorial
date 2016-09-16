@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>EnviroAtlas Web App Demo </title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+    <!-- Load Leaflet from CDN-->
+    <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
+	<script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+    
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://cdn.jsdelivr.net/leaflet.esri/2.0.2/esri-leaflet.js"></script>
+    
+    <!-- Load Load leaflet.draw plugin with options (https://leanpub.com/leaflet-tips-and-tricks/read#leanpub-auto-add-a-title-to-a-marker)-->
+    <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
+    
+    <!-- Lead Leaflet pan control (	<link rel="stylesheet" href="lib/Leaflet.Pancontrol/src/L.Control.Pan.css" />) -->
+    <link rel="stylesheet" href="lib/Leaflet.Pancontrol/src/L.Control.Pan.css" />
+     
+     <style typr = "text/css">
+	  #map {height : 400px;}    
+     </style>
+     
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+	<!-- Load Esri Leaflet Renderers (http://esri.github.io/esri-leaflet/examples/renderers-plugin.html, https://www.npmjs.com/package/esri-leaflet-renderers) -->
+	<script src="https://cdn.jsdelivr.net/leaflet.esri.renderers/2.0.2/esri-leaflet-renderers.js"></script>
+	
+	<!-- Figure out how to load script for esri.controls.legend -->
+	<script src="https://raw.githubusercontent.com/w8r/esri-leaflet-legend/master/dist/esri-leaflet-legend-compat-src.js"></script>
+	
+	<style>
+	.center {
+    margin: auto;
+    width: 35%;
+    border: 1px solid #ffffff;
+    padding: 1px;
+	}
+	</style>
+	
+</head>
+
+<body>
+  
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="example">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="" class="navbar-brand">Acute Respiratory Symptoms Avoided Due to Ozone Removed (Cases/Yr)</a>
+			</div>
+		</div>
+	</div>
+	
+	 <hr>
+	
+	<div id="map"></div>
+	
+	<script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
+	
+	<!-- Figure out how to load script for esri.controls.legend -->
+	<script>L.esri.Controls.legend([dynamicLayer, featureLayer],{position: 'topright'}).addTo(map);</script>
+	
+	<script>
+	var map = L.map('map', {drawControl: false}).setView([37.0902, -95.7129], 4);
+	
+	//interact and zoom link http://leafletjs.com/examples/choropleth.html
+	//Define the created pane when creating the feature layer
+	//Durham, NC
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_DNC_CleanAir/MapServer/20'
+	}).addTo(map);
+	//Fresno, CA
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_FCA_CleanAir/MapServer/20'
+	}).addTo(map);
+	//Green Bay, WI
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_GBWI_CleanAir/MapServer/20'
+	}).addTo(map);
+	//Milwaukee, WI
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_MWI_CleanAir/MapServer/20'
+	}).addTo(map)
+	//New Bedford, MA
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_NBMA_CleanAir/MapServer/20'
+	}).addTo(map);
+	//New York, NYC
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_NYNY_CleanAir/MapServer/20'
+	}).addTo(map);
+	//Paterson, NJ
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_PNJ_CleanAir/MapServer/20'
+	}).addTo(map);
+	//Phoenix, AZ
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_PAZ_CleanAir/MapServer/20'
+	}).addTo(map);
+	//Tampa, FL
+	L.esri.featureLayer({
+		url: 'https://enviroatlas.epa.gov/arcgis/rest/services/Communities/ESC_TFL_CleanAir/MapServer/20'
+	}).addTo(map);
+	</script>
+
+	<script>
+	 var LeafIcon = L.Icon.extend({
+			options: {
+				shadowUrl: 
+				    'http://leafletjs.com/docs/images/leaf-shadow.png',
+				iconSize:     [38, 95],
+				shadowSize:   [50, 64],
+				iconAnchor:   [22, 94],
+				shadowAnchor: [4, 62],
+				popupAnchor:  [-3, -76]
+			}
+		});
+
+	var greenIcon = new LeafIcon({
+		iconUrl: 'http://leafletjs.com/docs/images/leaf-green.png'
+			});
+
+	var drawnItems = new L.FeatureGroup();
+	map.addLayer(drawnItems);
+
+	var drawControl = new L.Control.Draw({
+			position: 'topleft',
+			draw: {
+				polygon: {
+					shapeOptions: {
+						color: 'purple'
+					},
+					allowIntersection: false,
+					drawError: {
+						color: 'orange',
+						timeout: 1000
+					},
+					showArea: true,
+					metric: false,
+					repeatMode: true
+				},
+				polyline: {
+					shapeOptions: {
+						color: 'red'
+					},
+				},
+				rect: {
+					shapeOptions: {
+						color: 'green'
+					},
+				},
+				circle: {
+					shapeOptions: {
+						color: 'steelblue'
+					},
+				},
+				marker: {
+					icon: greenIcon
+				},
+			},
+			edit: {
+				featureGroup: drawnItems
+			}
+		});
+		map.addControl(drawControl);
+
+		map.on('draw:created', function (e) {
+			var type = e.layerType,
+				layer = e.layer;
+
+			if (type === 'marker') {
+				layer.bindPopup('A popup!');
+			}
+
+			drawnItems.addLayer(layer);
+		});
+	
+	L.esri.basemapLayer('Imagery').addTo(map);
+	L.esri.basemapLayer('ImageryLabels').addTo(map);
+	
+	var marker = L.marker([35.994034, -78.898621], 
+        {draggable: false,    
+		title: 'Durham, NC',
+		opacity: 0.8}).addTo(map);//Durham, NC//
+    var marker = L.marker([36.7468, -119.7726],
+        {draggable: false,
+		title: 'Fresno, CA',
+		opacity: 0.8}).addTo(map);     //Fresno, CA//
+    var marker = L.marker([44.5192, -88.0198],
+        {draggable: false,
+		title: 'Green Bay, WI',
+		opacity: 0.8}).addTo(map);  //Green Bay, WI//
+    var marker = L.marker([43.0389, -87.9065],
+        {draggable: false,
+		title: 'Milwaukee, WI',
+		opacity: 0.8}).addTo(map);  //Milwaukee, WI//
+    var marker = L.marker([41.6362, -70.9342],
+        {draggable: false,
+		title: 'New Bedford, MA',
+		opacity: 0.8}).addTo(map);//New Bedford, MA//
+    var marker = L.marker([40.7128, -74.0059],
+        {draggable: false,
+		title: 'New York, NY',
+		opacity: 0.8}).addTo(map);   //New York, NY//
+    var marker = L.marker([40.9168, -74.1718],
+        {draggable: false,
+		title: 'Patterson, NJ',
+		opacity: 0.8}).addTo(map);  //Patterson, NJ//
+    var marker = L.marker([33.4484, -112.0740],
+        {draggable: false,
+		title: 'Phoenix, AZ',
+		opacity: 0.8}).addTo(map);    //Phoenix, AZ//
+	var marker = L.marker([27.9506, -82.4572],
+        {draggable: false,
+		title: 'Tampa, FL',
+		opacity: 0.8}).addTo(map);    //Tampa, FL//	
+	</script>
+	
+
+	<header>
+		<div class="jumbotron">
+			<div class="container">
+				<h2 { text-align: center }>Interact with the Map! Select an EnviroAtlas community from the list below.</h2>
+				<h4 { text-align: center }> Please ejoy interacting with this web app. To view the full set of ecosystem service layers in the interactive map,<a href="https://enviroatlas.epa.gov/enviroatlas/InteractiveMapEntrance/InteractiveMap/index.html">click here!</a></h4>	
+	</header>
+
+			<div class="container">
+				<div class="row">
+					<div class="well">
+						
+					<script>
+					DurhamNC = function () {
+						map.setView([35.994034, -78.898621], 10, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					FresnoCA = function () {
+						map.setView([36.7468, -119.7726], 10, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					GreenBayWI = function () {
+						map.setView([44.5192, -88.0198], 10, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					MilwaukeeWI = function () {
+						map.setView([43.0389, -87.9065], 9, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					NewBedfordMA = function () {
+						map.setView([41.6362, -70.9342], 10, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					NewYorkNY = function () {
+						map.setView([40.7128, -74.0059], 10, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					PatersonNJ = function () {
+						map.setView([40.9168, -74.1718], 12, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					PhoenixAZ = function () {
+						map.setView([33.4484, -112.0740], 10, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					TampaFL = function () {
+						map.setView([27.9506, -82.4572], 9.8, {
+						"pan": {
+							"animate": true,
+								"duration": 6
+								}
+							});
+						}
+					StopPan = function () {
+						map.setView(map.getCenter(), map.getZoom(), {
+							"animate": false
+						});
+					}
+					</script>
+					
+					<!-- Load buttons for pan (http://jsfiddle.net/nathansnider/4v2L0uze/) -->
+				
+				<div class="btn-group btn-group-justified">
+					<a href="#" class="btn btn-primary" onclick="DurhamNC()">Durham NC</a>
+					<a href="#" class="btn btn-primary" onclick="FresnoCA()">Fresno CA</a>
+					<a href="#" class="btn btn-primary" onclick="GreenBayWI()">Green Bay WI</a>
+					<a href="#" class="btn btn-primary" onclick="MilwaukeeWI()">Milwaukee WI</a>
+					<a href="#" class="btn btn-primary" onclick="NewBedfordMA()">New Bedford MA</a>
+					<a href="#" class="btn btn-primary" onclick="NewYorkNY()">New York NY</a>
+					<a href="#" class="btn btn-primary" onclick="PatersonNJ()">Paterson NJ</a>
+					<a href="#" class="btn btn-primary" onclick="PhoenixAZ()">Phoenix AZ</a>
+					<a href="#" class="btn btn-primary" onclick="TampaFL()">Tampa FL</a>
+				</div></div>
+					
+				<div class="btn-group btn-group-justified">
+					<a href="#" class="btn btn-danger" onclick="StopPan()">Stop Panning</a>
+					<a href="" class="btn btn-success btn-block">Refresh</a>
+				</div>
+					
+			<div class="container">
+					<ul class="nav nav-justified">
+						<li class="active"><a href="#Home" data-toggle="tab">Home</a></li>
+						<li><a href="#Visualizations" data-toggle="tab">Visualizations</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane fade in active" id="Home">
+							<h3>Create an EnviroAtlas map</h3>
+					<div class="dropdown dropdown-btn">
+						<div class="dropdown-toggle" data-toggle="dropdown">
+							<span id="uniqueId"> Community Demographics</span><span class="caret"/>
+						</div >
+						<ul class="dropdown-menu">
+							<li><a onclick="javascript:someFunction()">Percent Total Population</a></li>
+							<li><a onclick="javascript:someFunction()">Percent Age Less Than 5 Years Old</a></li>
+							<li><a onclick="javascript:someFunction()">Percent 25 Years and Over With a High School Degree</a></li>
+							<li><a onclick="javascript:someFunction()">Percent Below Poverty Level</a></li>
+							<!-- ... -->
+						</ul>
+					</div>
+					
+	<!-- Drop down layers can be done, check http://esri.github.io/esri-leaflet-renderers/spec/comparisons.html -->
+				<div class="dropdown dropdown-btn">
+					<div class="dropdown-toggle" data-toggle="dropdown">
+						<span id="uniqueId2">Landcover Tpye</span><span class="caret"/>
+					</div >
+					<ul class="dropdown-menu">
+						<li><a onclick="javascript:someOtherFunction()">Treecover</a></li>
+						<li><a onclick="javascript:someOtherFunction()">Greenspace</a></li>
+						<!-- ... -->
+					</ul>
+				</div>
+			</div>
+			
+				<div class="tab-pane fade" id="Visualizations">
+						<h3>Visualizations go in this tab.</h3>
+						
+				<! -- Using Google Charts (https://google-developers.appspot.com/chart/interactive/docs/gallery/piechart) -- >
+				<div class="center">
+						<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+							<script type="text/javascript">
+							google.charts.load("current", {packages:["corechart"]});
+							google.charts.setOnLoadCallback(drawChart);
+							function drawChart() {
+							var data = google.visualization.arrayToDataTable([
+							['Task', 'Hours per Day'],
+							['0.0-0.4 Cases',  35],
+							['0.0-0.4 Cases',  10],
+							['0.0-0.4 Cases',  10],
+							['0.0-0.4 Cases',  20],
+							['0.0-0.4 Cases',  25]
+							]);
+						var options = {
+							title: 'Percent Total Population Per Case Group in Duham, NC ',
+							is3D: true,
+								};
+						var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+							chart.draw(data, options);
+							}
+						</script>
+	
+					<body>
+						<div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+					</body>
+				</div>
+						
+					</div></div></div>	
+			
+	<footer>
+		<div class="container">
+			<hr>
+
+			<p><small><a href="http://facebook.com/askorama">Like us</a> On facebook</small></p>
+			<p>	<small><a href="http://twitter.com/wiredwiki">Ask us whatever </a> On Twitter</small></p>
+			<p>	<small><a href="http://youtube.com/wiredwiki">Subscribe to us</a> On Youtube</small>
+				
+			</p>
+		</div> <!-- end container -->
+	</footer>
+		
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>	
+</html>
